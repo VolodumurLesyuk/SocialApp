@@ -15,6 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+from django.views.generic import TemplateView
 
 from tweets.views import (
     tweet_list_view,
@@ -30,7 +33,12 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('tweets/', tweet_list_view),
     path('', home_page),
+    path('react/', TemplateView.as_view(template_name='react_via_dj.html')),
     path('create-tweet/', tweet_create_view),
     path('tweets/<int:tweet_id>/', tweet_detail_view),
     path('api/tweets/', include('tweets.urls'))
 ]
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
