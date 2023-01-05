@@ -7,10 +7,7 @@ from .views import (
     tweet_list_view,
     tweet_create_view,
 )
-'''
-CLIENT
-Base ENDPOINT /api/tweets/
-'''
+
 urlpatterns = [
     path('', tweet_list_view),
     path('action/', tweet_action_view),
