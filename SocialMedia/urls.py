@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path, re_path, include # url()
+from django.urls import path, re_path, include
 from django.views.generic import TemplateView
 
 from accounts.views import (
@@ -24,9 +24,9 @@ urlpatterns = [
     path('logout/', logout_view),
     path('register/', register_view),
     path('<int:tweet_id>', tweets_detail_view),
-    # re_path(r'profiles?/', include('profiles.urls')),
+    path('profile/', include('profiles.urls')),
     path('api/tweets/', include('tweets.api.urls')),
-    # re_path(r'api/profiles?/', include('profiles.api.urls')),
+    re_path(r'api/profiles?/', include('profiles.api.urls')),
 ]
 
 if settings.DEBUG:
