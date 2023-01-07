@@ -22,7 +22,7 @@ ALLOWED_HOSTS = settings.ALLOWED_HOSTS
 
 @api_view(['POST'])  # http method the client == POST
 # @authentication_classes([SessionAuthentication, MyCustomAuth])
-@permission_classes([IsAuthenticated])  # REST API course
+@permission_classes([IsAuthenticated])
 def tweet_create_view(request, *args, **kwargs):
     serializer = TweetCreateSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
@@ -91,30 +91,29 @@ def tweet_action_view(request, *args, **kwargs):
     return Response({}, status=200)
 
 
-# def get_paginated_queryset_response(qs, request):
-#     paginator = PageNumberPagination()
-#     paginator.page_size = 20
-#     paginated_qs = paginator.paginate_queryset(qs, request)
-#     serializer = TweetSerializer(paginated_qs, many=True, context={"request": request})
-#     return paginator.get_paginated_response(serializer.data)
+def get_paginated_queryset_response(qs, request):
+    paginator = PageNumberPagination()
+    paginator.page_size = 5
+    paginated_qs = paginator.paginate_queryset(qs, request)
+    serializer = TweetSerializer(paginated_qs, many=True, context={"request": request})
+    return paginator.get_paginated_response(serializer.data)
 
 
-# @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
-# def tweet_feed_view(request, *args, **kwargs):
-#     user = request.user
-#     qs = Tweet.objects.feed(user)
-#     return get_paginated_queryset_response(qs, request)
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def tweet_feed_view(request, *args, **kwargs):
+    user = request.user
+    qs = Tweet.objects.feed(user)
+    return get_paginated_queryset_response(qs, request)
 
 
 @api_view(['GET'])
 def tweet_list_view(request, *args, **kwargs):
     qs = Tweet.objects.all()
     username = request.GET.get('username')
-    serializer = TweetSerializer(qs, many=True)
     if username is not None:
         qs = qs.by_username(username)
-    return Response(serializer.data, status=200)
+    return get_paginated_queryset_response(qs, request)
 
 
 def tweet_create_view_pure_django(request, *args, **kwargs):
@@ -133,7 +132,7 @@ def tweet_create_view_pure_django(request, *args, **kwargs):
         obj.save()
         if request.is_ajax():
             return JsonResponse(obj.serialize(), status=201)  # 201 == created items
-        if next_url != None and is_safe_url(next_url, ALLOWED_HOSTS):
+        if next_url is not None and is_safe_url(next_url, ALLOWED_HOSTS):
             return redirect(next_url)
         form = TweetForm()
     if form.errors:
