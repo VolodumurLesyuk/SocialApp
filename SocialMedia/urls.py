@@ -11,13 +11,13 @@ from accounts.views import (
 )
 
 from tweets.views import (
-    # home_view,
+    home_view,
     tweets_list_view,
     tweets_detail_view,
 )
 
 urlpatterns = [
-    # path('', home_view),
+    path('', home_view),
     path('admin/', admin.site.urls),
     path('global/', tweets_list_view),
     path('login/', login_view),
